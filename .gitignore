@@ -1,0 +1,26 @@
+# =============================================================
+# TP FINAL COM 2 — Archivos que Git debe ignorar
+# =============================================================
+# Mantener el repositorio limpio: solo versionamos código fuente
+# y documentación. Los archivos generados no se suben a GitHub.
+
+# Caché de bytecode que genera Python al importar módulos
+__pycache__/
+*.py[cod]
+
+# Entornos virtuales (cada máquina crea el suyo)
+.venv/
+venv/
+env/
+
+# Cachés de herramientas de testeo y tipado
+.pytest_cache/
+.mypy_cache/
+
+# Configuración local de editores / IDEs
+.idea/
+.vscode/
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
