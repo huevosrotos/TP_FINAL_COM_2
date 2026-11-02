@@ -22,3 +22,6 @@ env/
 # Archivos del sistema operativo
 .DS_Store
 Thumbs.db
+
+# Datos generados por la demo del ejercicio 2
+catalogo_ecotech.json

@@ -17,7 +17,11 @@ TP_FINAL_COM_2/
 │   ├── ejercicio_01_sensores.py       # Solución: Puntos A y B + demo completa
 │   ├── test_ejercicio_01.py           # 19 tests unitarios (unittest)
 │   └── guia_de_estudio.md             # 10 preguntas de repaso con respuestas
-├── ejercicio_02_*/                    # Ejercicio 2 (próximamente)
+├── ejercicio_02_inventario/           # Ejercicio 2 (completo)
+│   ├── README.md                      # Conceptos, diseño y diagrama de clases
+│   ├── ejercicio_02_inventario.py     # Solución: Puntos A y B + demo completa
+│   ├── test_ejercicio_02.py           # 24 tests unitarios (unittest)
+│   └── guia_de_estudio.md             # 10 preguntas de repaso con respuestas
 └── ejercicio_03_*/                    # Ejercicio 3 (próximamente)
 ```
 
@@ -26,7 +30,7 @@ TP_FINAL_COM_2/
 | # | Ejercicio | Contenido | Estado |
 |---|---|---|---|
 | 1 | [Sanitización y Análisis Estadístico de Sensores](./ejercicio_01_sensores/) | Normalización de registros crudos de EcoTech Solutions + reporte estadístico consolidado (alertas por umbral y promedio térmico). | ✅ Completo |
-| 2 | *A definir* | — | ⬜ Pendiente |
+| 2 | [Modelo de Productos, Excepciones y Persistencia](./ejercicio_02_inventario/) | Jerarquía POO del catálogo (`DispositivoEcologico`, `PanelSolar`), excepción `StockInvalidoError` con stock encapsulado y persistencia en `catalogo_ecotech.json`. | ✅ Completo |
 | 3 | *A definir* | — | ⬜ Pendiente |
 
 ## Requisitos
@@ -45,6 +49,13 @@ python ejercicio_01_sensores.py
 
 # Ejercicio 1 — tests unitarios:
 python -m unittest test_ejercicio_01.py -v
+
+# Ejercicio 2 — demostración (valida stock, muestra fichas y exporta el JSON):
+cd ejercicio_02_inventario
+python ejercicio_02_inventario.py
+
+# Ejercicio 2 — tests unitarios:
+python -m unittest test_ejercicio_02.py -v
 ```
 
 ## Convenciones de documentación del repo
