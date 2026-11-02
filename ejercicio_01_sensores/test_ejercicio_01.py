@@ -5,7 +5,7 @@ TP Final COM 2 · EcoTech Solutions
 
 Qué se testea
 -------------
-* **Punto A** (``limpiar_registro_sensor``): el caso feliz del enunciado y
+* **Punto A** (``limpiar_registro_sensor``): Los casoscon datos válidos y
   los casos borde que motivan el ejercicio — espacios sobrantes, sufijos de
   unidad, coma decimal, atributos faltantes/vacíos, lecturas corruptas,
   no-mutación del registro original y validación del tipo de entrada.
@@ -23,10 +23,7 @@ Notas didácticas
 ----------------
 * Cada test prueba UNA sola conducta y tiene un nombre que la describe:
   cuando un test falla, el nombre ya dice qué se rompió.
-* Usamos la librería estándar (``unittest``) a propósito: no requiere
-  instalar nada y enseña los conceptos de fixtures (``setUp``), aserciones
-  específicas (``assertAlmostEqual``, ``assertIsNone``, ``assertRaises``)
-  que se reutilizan en pytest y cualquier framework de testing.
+* Usamos la librería estándar (``unittest``).
 """
 
 import unittest
@@ -128,6 +125,8 @@ class TestLimpiarRegistroSensor(unittest.TestCase):
         """Pasar algo que no es un dict debe fallar rápido y con claridad."""
         with self.assertRaises(TypeError):
             limpiar_registro_sensor("SENSOR-001")  # type: ignore[arg-type]
+
+# y no se me ocurren más!!!
 
 
 # =============================================================================

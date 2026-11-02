@@ -126,9 +126,8 @@ Porque `None` significa "no sé la temperatura", no "la temperatura es
 cero". Contarlas como 0 introduciría un sesgo artificial: con un sensor
 corrupto y tres a 30 °C, el promedio bajaría a 22.5 °C, un número que no
 representa a ninguna planta real. Excluir las inválidas y promediar solo
-las válidas es la convención estadística honesta; el costo es aceptable: la
-cantidad de lecturas que integran el promedio puede ser menor a la cantidad
-de sensores.
+las válidas es la convención asumida: la cantidad de lecturas que integran
+el promedio puede ser menor a la cantidad de sensores.
 </details>
 
 ---
@@ -163,16 +162,16 @@ conversión, se aplicaría la fórmula `c = (f - 32) * 5 / 9` a los registros
 en Fahrenheit, para que el promedio compare manzanas con manzanas. La clave
 del diseño: **detectar** la unidad pertenece a la sanitización, pero
 **convertir** la unidad es una transformación de dominio que debe quedar
-explícita (y testeada) aparte.
+explícita y testeada aparte.
 </details>
 
 ---
 
-## ¿Cómo seguir estudiando?
+## ¿Cómo lo probamos?
 
-1. Corré los tests con `python -m unittest test_ejercicio_01.py -v` y
-   **rompé algo a propósito**: cambiá un `>` por `>=` y mirá qué test falla.
-2. Agregá vos mismos un caso borde nuevo (¿qué pasa si la temperatura llega
-   como `"24.5c"` minúscula?) y escribí primero el test que lo exige.
-3. Leé los docstrings del código con `help()`: desde Python,
+1. Correr los tests con `python -m unittest test_ejercicio_01.py -v` y
+   **romper algo a propósito**: cambiá un `>` por `>=` y mirá qué test falla.
+2. Agregar un caso borde, por ej. ¿qué pasa si la temperatura llega
+   como `"24.5c"` minúscula?
+3. Leer los docstrings del código con `help()`: desde Python,
    `help(limpiar_registro_sensor)` muestra la documentación completa.

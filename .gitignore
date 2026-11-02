@@ -1,8 +1,6 @@
 # =============================================================
-# TP FINAL COM 2 — Archivos que Git debe ignorar
+#                   TP FINAL COM 2
 # =============================================================
-# Mantener el repositorio limpio: solo versionamos código fuente
-# y documentación. Los archivos generados no se suben a GitHub.
 
 # Caché de bytecode que genera Python al importar módulos
 __pycache__/

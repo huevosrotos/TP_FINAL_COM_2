@@ -2,7 +2,7 @@
 
 > **TP Final COM 2 · EcoTech Solutions**
 
-Los microcontroladores de la planta transmiten lecturas térmicas heterogéneas:
+Los sensores de la planta transmiten lecturas térmicas heterogéneas:
 espacios indeseados (`" SENSOR-001 "`), valores mezclados con unidades
 (``"24.5C"``) y atributos incompletos (sensores sin ubicación). Este ejercicio
 construye el componente que **normaliza esos registros** y genera el
@@ -16,7 +16,7 @@ construye el componente que **normaliza esos registros** y genera el
 |---|---|
 | `ejercicio_01_sensores.py` | Solución completa: Punto A, Punto B y demo del flujo. |
 | `test_ejercicio_01.py` | 19 tests unitarios con `unittest` (librería estándar). |
-| `guia_de_estudio.md` | 10 preguntas de repaso tipo parcial, con respuestas plegables. |
+| `guia_de_estudio.md` | 10 preguntas del TP, con respuestas plegables. |
 | `README.md` | Este documento: conceptos, diseño y modo de uso. |
 
 ## Cómo ejecutar
@@ -41,7 +41,7 @@ Requisitos: **Python 3.10 o superior** (se usan type hints modernos como
 ### 1. Sanitización vs. normalización
 
 Antes de poder calcular nada, los datos tienen que ser *confiables*. En el
-día a día profesional, gran parte del trabajo con datos es justamente esta
+día a día gran parte del trabajo con datos es justamente esta
 etapa de limpieza:
 
 - **Sanitizar** = eliminar lo que no debería estar (espacios sobrantes,
@@ -93,8 +93,8 @@ absoluta: lo importante es documentarla y testearla, y así se hizo.
 
 ### 6. Estadística mínima: el promedio
 
-El promedio térmico global se calcula como suma de lecturas válidas dividida
-por cantidad de lecturas válidas, **en una sola pasada** por la lista
+El promedio de temperatura se calcula como suma de lecturas válidas dividida
+por cantidad de lecturas, **en una sola pasada** por la lista
 (acumuladores). Se devuelve sin redondear: redondear es una decisión de
 *presentación*, y se hace solo al imprimir el reporte.
 
@@ -146,7 +146,7 @@ flowchart TD
 
 ---
 
-## Extensiones para seguir practicando
+## Para seguir practicando
 
 1. **Conversión de unidades**: si la lectura viene en `F`, convertirla a
    Celsius antes de promediar (35.2 °F ≈ 1.8 °C). Hoy el sufijo solo se

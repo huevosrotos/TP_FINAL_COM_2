@@ -15,11 +15,11 @@ Este módulo resuelve el problema en dos capas bien separadas:
 * **Punto A — Normalización:** ``limpiar_registro_sensor()`` toma UN registro
   crudo y devuelve un diccionario NUEVO, estandarizado y confiable.
 * **Punto B — Monitoreo estadístico:** ``generar_resumen_sensores()`` toma la
-  colección ya sanitizada más un umbral y devuelve la tupla
+  colección ya sanitizada por encima de un umbral y devuelve la tupla
   ``(lista_sensores_alerta, promedio_temperatura)``.
 
-Separar "limpiar" de "analizar" es una decisión de diseño deliberada: cada
-función hace UNA sola cosa (principio de responsabilidad única) y puede
+Separé "limpiar" de "analizar": cada función hace UNA sola cosa
+(principio de responsabilidad única) y puede
 probarse de forma independiente con tests unitarios.
 
 Cómo ejecutar la demostración
@@ -51,8 +51,8 @@ from typing import Any, TypedDict
 # =============================================================================
 # CONSTANTES DE MÓDULO
 # =============================================================================
-# Definir estos valores como constantes (y no "hardcodearlos" adentro de las
-# funciones) tiene dos ventajas pedagógicas:
+# Definí estos valores como constantes, no están "hardcodeadas" dentro de las
+# funciones.
 #   1. Existe UN único lugar para cambiar la política de valores por defecto.
 #   2. El propio nombre de la constante documenta la intención del valor.
 
@@ -62,9 +62,9 @@ UBICACION_POR_DEFECTO: str = "Ubicación no registrada"
 #: Identificador de reserva cuando el registro crudo no trae ``sensor_id``.
 ID_POR_DEFECTO: str = "SENSOR-DESCONOCIDO"
 
-#: Sufijos de unidad que puede traer "pegados" una lectura (``"24.5C"``,
-#: ``"98F"``). Nota didáctica: acá NO convertimos unidades (Fahrenheit a
-#: Celsius, por ejemplo); solo removemos el sufijo. Hacer la conversión sería
+#: Sufijos de unidad que puede traer "pegada" una lectura (``"24.5C"``,
+#: ``"98F"``). NO convertimos unidades (Fahrenheit a Celsius, por ejemplo);
+# solo removemos el sufijo. Hacer la conversión sería
 #: una extensión natural de este TP (ver README y guía de estudio).
 SUFIJOS_UNIDAD: tuple[str, ...] = ("C", "F", "K")
 
@@ -73,15 +73,15 @@ SUFIJOS_UNIDAD: tuple[str, ...] = ("C", "F", "K")
 # TIPOS PERSONALIZADOS
 # =============================================================================
 class RegistroLimpio(TypedDict):
-    """Contrato de forma del diccionario que devuelve el Punto A.
+    """Forma del diccionario que devuelve el Punto A.
 
     ``TypedDict`` describe la estructura esperada de un diccionario sin
     agregar costo en tiempo de ejecución: es tipado estático puro, lo que
     permite que el editor o ``mypy`` avisen si guardamos/leemos una clave
     con el tipo equivocado.
 
-    Si la cursada todavía no vio ``TypedDict``, anotar los returns como
-    ``dict[str, Any]`` también es correcto: la lógica no cambia.
+    Anotar los returns como ``dict[str, Any]`` también es correcto:
+    la lógica no cambia.
     """
 
     sensor_id: str
@@ -93,8 +93,7 @@ class RegistroLimpio(TypedDict):
 # FUNCIONES AUXILIARES PRIVADAS (HELPERS)
 # =============================================================================
 # El guion bajo inicial (``_``) es una convención de Python para señalar que
-# una función es "interna" del módulo: resuelve detalles de implementación y
-# NO forma parte de la interfaz pública que pide el enunciado.
+# una función es "interna" del módulo.
 
 
 def _limpiar_texto(valor: Any) -> str:
@@ -117,19 +116,18 @@ def _limpiar_texto(valor: Any) -> str:
 
 
 def _parsear_temperatura(valor: Any) -> float | None:
-    """Extrae el valor numérico de una lectura térmica "sucia".
+    """Extrae el valor numérico de una lectura "sucia".
 
-    Estrategia (en orden de casos):
+    Estrategia:
 
         1. Si el valor ya es numérico (``int``/``float``), se castea a
-           ``float`` y listo: no hay nada que limpiar.
-        2. Si es texto, se recortan espacios, se unifica la coma decimal
-           (habitual en teclados argentinos) por punto, se quita el símbolo
-           ``°`` y se descarta el sufijo de unidad (C/F/K).
+           ``float`` y listo.
+        2. Si es texto, se recortan espacios, se unifica la coma decimal por punto,
+           se quita el símbolo ``°`` y se descarta el sufijo de unidad (C/F/K).
         3. Si después de todo eso el texto no representa un número válido,
            se devuelve ``None`` en lugar de romper el programa: UNA lectura
-           corrupta no debería tumbar el reporte de toda la planta
-           (principio de robustez ante datos sucios).
+           corrupta no debería arruinar el reporte de toda la planta
+           (robustez ante datos sucios).
 
     Args:
         valor: Lectura cruda, por ejemplo ``" 24.5C "``, ``"29,9C"`` o ``22``.
@@ -152,13 +150,12 @@ def _parsear_temperatura(valor: Any) -> float | None:
     for sufijo in SUFIJOS_UNIDAD:
         if texto.endswith(sufijo):
             texto = texto[:-len(sufijo)].strip()
-            break  # Solo puede terminar en UNA unidad; cortamos al primer hit.
+            break  # Solo puede terminar en UNA unidad; cortamos al primer hallazgo.
 
     # --- Caso 3: validación numérica controlada ------------------------------
     # Convertir texto a float lanza ``ValueError`` si el texto no es un
-    # número. En lugar de dejar que la excepción suba y rompa todo, la
-    # "atrapamos" y la traducimos a un valor centinela (None) que las capas
-    # superiores saben interpretar.
+    # número. En lugar de dejar que la excepción rompa todo, la
+    # "catcheamos" y la traducimos a un valor None que Python sabe interpretar.
     try:
         return float(texto)
     except ValueError:
@@ -169,7 +166,7 @@ def _parsear_temperatura(valor: Any) -> float | None:
 # PUNTO A — NORMALIZACIÓN DE LECTURAS
 # =============================================================================
 def limpiar_registro_sensor(registro_raw: dict[str, Any]) -> RegistroLimpio:
-    """Normaliza UN registro crudo de sensor a un formato estandarizado.
+    """Normaliza UN registro crudo de sensor al formato estandarizado.
 
     Transformaciones garantizadas sobre el diccionario de salida:
 
@@ -178,19 +175,15 @@ def limpiar_registro_sensor(registro_raw: dict[str, Any]) -> RegistroLimpio:
         * ``temperatura``: valor numérico ``float`` sin sufijos de unidad
           (``"24.5C"`` -> ``24.5``); ``None`` si la lectura es irrecuperable.
         * ``ubicacion``: texto recortado; si falta o está vacío se aplica un
-          valor por defecto seguro (``UBICACION_POR_DEFECTO``).
-
-    Decisiones de diseño que vale la pena discutir en clase:
-
+          valor por defecto (``UBICACION_POR_DEFECTO``).
         * La función NO muta ``registro_raw``: construye y devuelve un
-          diccionario NUEVO. Evitar efectos secundarios hace el código más
-          fácil de razonar, de reutilizar y de testear.
+          diccionario NUEVO.
         * Si la entrada ni siquiera es un diccionario, se levanta un
-          ``TypeError`` con mensaje claro: fallar rápido y explícito es
-          mejor que fallar más tarde con un error criptico.
+          ``TypeError`` con mensaje claro: si algo va a fallar que falle rápido
+          y explícito.
         * La ubicación faltante NO se completa con ``None`` sino con un
           texto legible: el reporte final lo van a leer personas que toman
-          decisiones, y "Ubicación no registrada" comunica mejor que "null".
+          decisiones, y "Ubicación no registrada" es mejor que "null".
 
     Args:
         registro_raw: Diccionario crudo, por ejemplo::
@@ -214,7 +207,7 @@ def limpiar_registro_sensor(registro_raw: dict[str, Any]) -> RegistroLimpio:
     """
     # --- Validación de entrada ----------------------------------------------
     # El enunciado promete diccionarios, pero "confiar y verificar" es más
-    # barato que depurar un KeyError a mitad del reporte.
+    # barato que depurar un KeyError.
     if not isinstance(registro_raw, dict):
         raise TypeError(
             f"Se esperaba un dict y llegó {type(registro_raw).__name__}. "
@@ -224,7 +217,7 @@ def limpiar_registro_sensor(registro_raw: dict[str, Any]) -> RegistroLimpio:
     # --- sensor_id ------------------------------------------------------------
     # ``_limpiar_texto`` devuelve "" si falta la clave o viene en blanco; el
     # operador ``or`` aprovecha que "" es "falsy" para sustituirlo por el
-    # identificador de reserva. Equivale a un if/else pero más declarativo.
+    # identificador de reserva. Como si fuera un if/else.
     sensor_id = _limpiar_texto(registro_raw.get("sensor_id")) or ID_POR_DEFECTO
 
     # --- temperatura -----------------------------------------------------------
@@ -237,7 +230,7 @@ def limpiar_registro_sensor(registro_raw: dict[str, Any]) -> RegistroLimpio:
     # son solo espacios, aplicamos el valor por defecto seguro.
     ubicacion = _limpiar_texto(registro_raw.get("ubicacion")) or UBICACION_POR_DEFECTO
 
-    # Devolvemos un diccionario NUEVO: el registro original queda intacto.
+    # Devolvemos un diccionario NUEVO, el registro original queda intacto.
     return RegistroLimpio(
         sensor_id=sensor_id,
         temperatura=temperatura,
@@ -254,22 +247,20 @@ def generar_resumen_sensores(
 ) -> tuple[list[str], float]:
     """Calcula el resumen estadístico de la planta a partir de datos limpios.
 
-    Recorre la colección de registros ya sanitizados por el Punto A y
+    Recorre la colección de registros sanitizados por el Punto A y
     construye dos métricas para la toma de decisiones:
 
         1. Los ``sensor_id`` de los dispositivos cuya temperatura SUPERA el
            umbral (comparación ESTRICTA con ``>``: un valor exactamente igual
            al umbral no dispara alerta).
         2. El promedio térmico global de la planta, calculado solo con las
-           lecturas válidas (las ``None`` se excluyen para no distorsionar
-           la estadística).
+           lecturas válidas (las ``None`` se excluyen).
 
     Decisión sobre casos extremos:
 
         * Lista vacía (o con todas las lecturas inválidas): se devuelve
           ``([], 0.0)`` en lugar de lanzar ``ZeroDivisionError``. El reporte
-          debe poder generarse siempre; igualdad con 0.0 en promedio es la
-          convención que elegimos y está documentada acá.
+          debe poder generarse siempre.
 
     Args:
         lista_sensores_limpios: Colección de diccionarios con la forma
@@ -285,6 +276,7 @@ def generar_resumen_sensores(
             * ``promedio_temperatura`` es un ``float`` con el promedio
               térmico global. Se devuelve SIN redondear: redondear es una
               decisión de presentación y se hace al momento de imprimir.
+              Los datos se deben toquetear lo menos posible mientras se procesan.
 
     Example:
         >>> sensores = [
@@ -294,19 +286,16 @@ def generar_resumen_sensores(
         >>> generar_resumen_sensores(sensores, 25.0)
         (['B'], 25.0)
     """
-    # Acumuladores: listas que vamos llenando durante el recorrido. Esta
-    # técnica ("fold" manual) es el patrón clásico para computar varias
-    # métricas en una sola pasada por los datos.
+    # Acumuladores: listas que vamos llenando durante el recorrido.
     sensores_en_alerta: list[str] = []
     temperaturas_validas: list[float] = []
 
     for registro in lista_sensores_limpios:
         temperatura = registro.get("temperatura")
 
-        # El contrato del Punto A garantiza temperatura float | None. Aun
+        # El Punto A garantiza temperatura float | None. Aun
         # así validamos: si alguien pasa datos que NO pasaron por la
-        # sanitización, los salteamos en vez de romper el reporte
-        # (defensa en profundidad).
+        # sanitización, los salteamos en vez de romper el reporte.
         if temperatura is None:
             continue
 
@@ -319,13 +308,13 @@ def generar_resumen_sensores(
 
         # ``>`` estricto: "superar el umbral" se interpreta como estar
         # ESTRICTAMENTE por encima. Esta convención podría haber sido
-        # ``>=``; lo importante es documentarla (y testearla).
+        # ``>=``.
         if temperatura_num > umbral_temperatura:
             sensores_en_alerta.append(
                 str(registro.get("sensor_id", ID_POR_DEFECTO))
             )
 
-    # Guarda contra división por cero: ``sum([]) / len([])`` lanzaría
+    # Protección contra división por cero: ``sum([]) / len([])`` lanzaría
     # ZeroDivisionError. Si no hay lecturas válidas, el promedio es 0.0.
     if temperaturas_validas:
         promedio_temperatura = sum(temperaturas_validas) / len(temperaturas_validas)
@@ -353,11 +342,11 @@ def leer_umbral_desde_teclado() -> float:
     Implementa un bucle de validación: mientras la entrada no sea
     convertible a ``float``, se informa el error y se vuelve a preguntar.
     Se acepta coma decimal (``30,5``) además de punto (``30.5``), por ser
-    la convención habitual en teclados argentinos.
+    la convención habitual en teclados.
 
     Returns:
         El umbral ingresado por el usuario como ``float`` (puede ser
-        negativo: en una cámara frigorífica eso es legítimo).
+        negativo: Por ejemplo, si se mide temperatura relativa).
     """
     while True:
         respuesta = input("Ingresá el umbral de alerta en °C (ej: 30.5): ")
@@ -392,7 +381,6 @@ def imprimir_reporte_json(
             reporte de con qué criterio se detectaron las alertas.
     """
     # Redondeamos SOLO al mostrar (y no dentro de las funciones de cálculo):
-    # así la estadística conserva precisión completa para futuros usos.
     reporte = {
         "titulo": "Estado térmico de la planta — EcoTech Solutions",
         "umbral_aplicado_celsius": round(umbral_temperatura, 2),
@@ -411,12 +399,12 @@ def imprimir_reporte_json(
 # BLOQUE DE DEMOSTRACIÓN — FLUJO COMPLETO
 # =============================================================================
 def demo_flujo_completo() -> None:
-    """Ejecuta el flujo end-to-end pedido por el enunciado.
+    """Ejecuta el flujo pedido por el enunciado.
 
     Los cuatro pasos del pipeline quedan a la vista para poder pausar la
-    demostración en clase y examinar la salida de cada etapa:
+    demostración y examinar la salida de cada etapa:
 
-        [1] Datos crudos heterogéneos (como llegan del microcontrolador).
+        [1] Datos crudos heterogéneos (como llegarían del sensor).
         [2] Sanitización registro por registro (Punto A).
         [3] Umbral definido por el operador + estadística (Punto B).
         [4] Reporte consolidado en JSON.
@@ -440,12 +428,12 @@ def demo_flujo_completo() -> None:
     print("=" * 66)
     print("TP FINAL COM 2 · Ejercicio 1 — Sensores EcoTech Solutions")
     print("=" * 66)
-    print("\n[1] Registros crudos recibidos del microcontrolador:")
+    print("\n[1] Registros crudos recibidos de los sensores:")
     print(json.dumps(registros_crudos, indent=4, ensure_ascii=False))
 
     # ------------------------------------------------------------------
-    # PASO 2: sanitización. Una list comprehension aplica la función del
-    # Punto A a cada registro crudo. Es la forma pythónica de "mapear" una
+    # PASO 2: sanitización. Aplica la función del
+    # Punto A a cada registro crudo. Mapeamos en forma pythónica una
     # transformación sobre una colección.
     # ------------------------------------------------------------------
     sensores_limpios = [limpiar_registro_sensor(r) for r in registros_crudos]
@@ -468,8 +456,7 @@ def demo_flujo_completo() -> None:
 
 
 if __name__ == "__main__":
-    # Este guard es un patrón esencial de Python: ``demo_flujo_completo()``
-    # corre SOLO cuando el archivo se ejecuta directamente
+    # ``demo_flujo_completo()`` corre SOLO cuando el archivo se ejecuta directamente
     # (``python ejercicio_01_sensores.py``). Si el módulo se importa (por
     # ejemplo, desde los tests), el bloque se ignora y no se pide nada por
     # teclado: así los tests pueden ejecutarse de forma automática.

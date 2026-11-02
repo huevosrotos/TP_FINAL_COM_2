@@ -1,9 +1,8 @@
 # TP FINAL COM 2
 
-Repositorio de entregas del **Trabajo Práctico Final** de la materia **COM 2**.
-Cada ejercicio se resuelve en su propia carpeta, con código extensamente
-documentado con fines de **docencia y aprendizaje**: docstrings estilo Google,
-type hints y comentarios que explican el *por qué* de cada decisión de diseño.
+Repositorio del **Trabajo Práctico Final** de Miguel Della Vecchia, **COMISION 2**.
+Cada ejercicio se resuelve en su propia carpeta y documentado con docstrings estilo Google,
+type hints y comentarios.
 
 ---
 
@@ -35,7 +34,7 @@ TP_FINAL_COM_2/
 - **Python 3.10 o superior** (los ejercicios usan type hints modernos como
   `float | None` y `list[str]`).
 - **Cero dependencias externas**: todo se resuelve con la librería estándar,
-  para que el TP funcione en cualquier máquina sin instalar nada.
+  para que el TP funcione en cualquier máquina.
 
 ## Cómo ejecutar cada ejercicio
 
@@ -50,36 +49,28 @@ python -m unittest test_ejercicio_01.py -v
 
 ## Convenciones de documentación del repo
 
-Para que los tres ejercicios se lean de la misma manera:
+Para la legibilidad:
 
 1. **Docstrings estilo Google** en cada función, clase y módulo: qué hace,
    argumentos, retorno, errores y ejemplos cuando aportan.
 2. **Type hints en todo lo público**: las firmas se leen como documentación.
-3. **Comentarios que explican el por qué**, no el qué: el código dice *qué*
+3. **Comentarios que explican el por qué, no el qué: el código dice *qué*
    hace; el comentario dice *por qué* se hace así y qué alternativa se
    descartó.
-4. **Constantes de módulo con nombre** en vez de números y textos mágicos
+4. **Constantes de módulo con nombre** en vez de números y textos
    dispersos por el código.
 5. **Tests por ejercicio**, con nombres que describen la conducta probada.
 
-## Cómo publicarlo en GitHub
-
-La carpeta ya fue inicializada como repositorio Git local (rama `main`, con
-todos los archivos preparados). Para publicarlo como repo **público**:
 
 ```bash
 cd TP_FINAL_COM_2
 
-# 1. Primer commit (configurá tu identidad si Git te lo pide):
+# 1. Primer commit:
 git commit -m "Ejercicio 1: sanitización y análisis estadístico de sensores"
 
-# 2. Crear el repositorio vacío en github.com (nombre sugerido: TP-FINAL-COM-2)
-#    y conectarlo con tu URL real:
-git remote add origin https://github.com/TU_USUARIO/TP-FINAL-COM-2.git
+# 2. Crear el repositorio vacío en github.com (TP-FINAL-COM-2)
+git remote add origin https://github.com/huevosrotos/TP-FINAL-COM-2.git
 
 # 3. Publicar:
 git push -u origin main
 ```
-
-> Sugerencia: si el nombre del repo remoto no puede llevar guiones bajos,
-> `TP-FINAL-COM-2` (con guiones) mantiene la lectura idéntica.
