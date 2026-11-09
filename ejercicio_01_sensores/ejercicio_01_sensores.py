@@ -75,13 +75,10 @@ SUFIJOS_UNIDAD: tuple[str, ...] = ("C", "F", "K")
 class RegistroLimpio(TypedDict):
     """Forma del diccionario que devuelve el Punto A.
 
-    ``TypedDict`` describe la estructura esperada de un diccionario sin
+    Leí que ``TypedDict`` describe la estructura esperada de un diccionario sin
     agregar costo en tiempo de ejecución: es tipado estático puro, lo que
     permite que el editor o ``mypy`` avisen si guardamos/leemos una clave
     con el tipo equivocado.
-
-    Anotar los returns como ``dict[str, Any]`` también es correcto:
-    la lógica no cambia.
     """
 
     sensor_id: str
@@ -181,9 +178,8 @@ def limpiar_registro_sensor(registro_raw: dict[str, Any]) -> RegistroLimpio:
         * Si la entrada ni siquiera es un diccionario, se levanta un
           ``TypeError`` con mensaje claro: si algo va a fallar que falle rápido
           y explícito.
-        * La ubicación faltante NO se completa con ``None`` sino con un
-          texto legible: el reporte final lo van a leer personas que toman
-          decisiones, y "Ubicación no registrada" es mejor que "null".
+        * La ubicación faltante NO se completa con ``None`` 
+          y "Ubicación no registrada" es mejor que "null".
 
     Args:
         registro_raw: Diccionario crudo, por ejemplo::
@@ -198,7 +194,7 @@ def limpiar_registro_sensor(registro_raw: dict[str, Any]) -> RegistroLimpio:
     Raises:
         TypeError: Si ``registro_raw`` no es un diccionario.
 
-    Example:
+    Ejemplos:
         >>> limpiar_registro_sensor(
         ...     {"sensor_id": " SENSOR-001 ", "temperatura": "24.5C",
         ...      "ubicacion": "Planta Norte"})
@@ -206,12 +202,10 @@ def limpiar_registro_sensor(registro_raw: dict[str, Any]) -> RegistroLimpio:
          'ubicacion': 'Planta Norte'}
     """
     # --- Validación de entrada ----------------------------------------------
-    # El enunciado promete diccionarios, pero "confiar y verificar" es más
-    # barato que depurar un KeyError.
+    # Verificamos para evitar KeyError.
     if not isinstance(registro_raw, dict):
         raise TypeError(
             f"Se esperaba un dict y llegó {type(registro_raw).__name__}. "
-            "Revisá cómo se construyen los registros crudos."
         )
 
     # --- sensor_id ------------------------------------------------------------
@@ -250,18 +244,6 @@ def generar_resumen_sensores(
     Recorre la colección de registros sanitizados por el Punto A y
     construye dos métricas para la toma de decisiones:
 
-        1. Los ``sensor_id`` de los dispositivos cuya temperatura SUPERA el
-           umbral (comparación ESTRICTA con ``>``: un valor exactamente igual
-           al umbral no dispara alerta).
-        2. El promedio térmico global de la planta, calculado solo con las
-           lecturas válidas (las ``None`` se excluyen).
-
-    Decisión sobre casos extremos:
-
-        * Lista vacía (o con todas las lecturas inválidas): se devuelve
-          ``([], 0.0)`` en lugar de lanzar ``ZeroDivisionError``. El reporte
-          debe poder generarse siempre.
-
     Args:
         lista_sensores_limpios: Colección de diccionarios con la forma
             ``RegistroLimpio`` (salida del Punto A).
@@ -278,7 +260,7 @@ def generar_resumen_sensores(
               decisión de presentación y se hace al momento de imprimir.
               Los datos se deben toquetear lo menos posible mientras se procesan.
 
-    Example:
+    Ejemplos:
         >>> sensores = [
         ...     {"sensor_id": "A", "temperatura": 20.0, "ubicacion": "X"},
         ...     {"sensor_id": "B", "temperatura": 30.0, "ubicacion": "Y"},
@@ -293,9 +275,7 @@ def generar_resumen_sensores(
     for registro in lista_sensores_limpios:
         temperatura = registro.get("temperatura")
 
-        # El Punto A garantiza temperatura float | None. Aun
-        # así validamos: si alguien pasa datos que NO pasaron por la
-        # sanitización, los salteamos en vez de romper el reporte.
+        # El Punto A garantiza temperatura float | None.
         if temperatura is None:
             continue
 
@@ -306,9 +286,6 @@ def generar_resumen_sensores(
 
         temperaturas_validas.append(temperatura_num)
 
-        # ``>`` estricto: "superar el umbral" se interpreta como estar
-        # ESTRICTAMENTE por encima. Esta convención podría haber sido
-        # ``>=``.
         if temperatura_num > umbral_temperatura:
             sensores_en_alerta.append(
                 str(registro.get("sensor_id", ID_POR_DEFECTO))
@@ -323,8 +300,7 @@ def generar_resumen_sensores(
 
     # La función devuelve una TUPLA (y no una lista) porque representa un
     # registro fijo de dos valores con significados distintos: posición 0 =
-    # alertas, posición 1 = promedio. La inmutabilidad de la tupla comunica
-    # esa estructura.
+    # alertas, posición 1 = promedio.
     return sensores_en_alerta, promedio_temperatura
 
 
@@ -332,17 +308,14 @@ def generar_resumen_sensores(
 # CAPA DE PRESENTACIÓN (I/O CON EL USUARIO)
 # =============================================================================
 # Estas funciones NO contienen lógica de negocio: piden datos y muestran
-# resultados. Mantenerlas separadas del cálculo permite cambiar la interfaz
+# resultados. Se puede cambiar la interfaz
 # (consola -> JSON -> web) sin tocar las funciones del enunciado.
 
 
 def leer_umbral_desde_teclado() -> float:
     """Pide el umbral de temperatura por consola hasta recibir un número.
 
-    Implementa un bucle de validación: mientras la entrada no sea
-    convertible a ``float``, se informa el error y se vuelve a preguntar.
-    Se acepta coma decimal (``30,5``) además de punto (``30.5``), por ser
-    la convención habitual en teclados.
+    Acepto coma y punto (``30,5``), (``30.5``) según el teclado.
 
     Returns:
         El umbral ingresado por el usuario como ``float`` (puede ser
