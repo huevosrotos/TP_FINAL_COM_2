@@ -16,7 +16,7 @@ Resolví el ejercicio en dos capas:
   ``calcular_emisiones_carbono()`` y la elevación de ``ValueError`` ante
   consumos fuera de rango.
 * **Punto B — Métricas y web:** ``obtener_metricas_consumo()`` procesa el
-  historial de consumos por planta usando el algoritmo auditado, y
+  historial de consumos por planta usando el algoritmo auditado y
   ``vista_panel_sustentabilidad()`` (en ``vista_django.py``) arma el
   contexto y renderiza ``sustentabilidad/panel.html``.
 
@@ -49,7 +49,7 @@ from typing import Any
 # =============================================================================
 # Este es el algoritmo que EcoTech quiere certificar antes de producción.
 # Su contrato: emisiones = consumo * factor, y ValueError si el consumo es
-# negativo (un consumo negativo no tiene sentido físico ni contable).
+# negativo (un consumo negativo no tiene sentido físico).
 
 
 def calcular_emisiones_carbono(
@@ -155,7 +155,7 @@ def construir_contexto_panel(
     """Arma el diccionario de contexto completo para la plantilla.
 
     Separé esta función de la vista por una razón práctica: así la lógica
-    de armado del contexto se testea SIN Django, y la vista queda "delgada"
+    de armado del contexto se testea SIN Django, y la vista no queda inflada
     (solo llama acá y renderiza).
     """
     contexto = obtener_metricas_consumo(registros)
@@ -167,7 +167,7 @@ def construir_contexto_panel(
 # DATOS SIMULADOS DE LA TUBERÍA
 # =============================================================================
 # En producción esto vendría de la base de datos o de los medidores IoT.
-# Para el TP lo simulo con una constante: el flujo es exactamente el mismo.
+# Para el TP lo simulo con una constante: el flujo es el mismo.
 HISTORIAL_CONSUMOS: list[dict[str, Any]] = [
     {"planta": "Planta Norte", "consumo_kwh": 12500.0},
     {"planta": "Planta Sur", "consumo_kwh": 9800.5},
@@ -221,7 +221,7 @@ def demo_flujo_completo() -> None:
     print("=" * 66)
 
     # ------------------------------------------------------------------
-    # PASO 1: chequeo express del algoritmo antes de confiar en él.
+    # PASO 1: chequeo express del algoritmo antes de asumirlo como confiable.
     # ------------------------------------------------------------------
     print("\n[1] Auditoría express del algoritmo de emisiones:")
     print(f"  calcular_emisiones_carbono(100)      -> "
@@ -254,7 +254,7 @@ def demo_flujo_completo() -> None:
     print(json.dumps(contexto, indent=4, ensure_ascii=False))
 
     # ------------------------------------------------------------------
-    # PASO 4: render real si Django está instalado; si no, aviso claro.
+    # PASO 4: render real si Django está instalado; si no solo aviso.
     # ------------------------------------------------------------------
     print("\n[4] Render web:")
     html = _renderizar_con_django()
@@ -273,5 +273,4 @@ def demo_flujo_completo() -> None:
 
 if __name__ == "__main__":
     # Mismo guard que en los ejercicios anteriores: la demo solo corre al
-    # ejecutar el archivo directo; los tests importan sin efectos de I/O.
     demo_flujo_completo()
