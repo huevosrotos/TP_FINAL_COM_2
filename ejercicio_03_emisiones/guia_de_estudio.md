@@ -115,7 +115,7 @@ consumidor es la plantilla, que accede por NOMBRE de clave
 
 El `ValueError` que lanza el algoritmo auditado sube por
 `obtener_metricas_consumo` y corta todo el procesamiento. Elegí propagarlo
-(los tests lo fijan) porque un consumo negativo es un dato inválido cuyo
+porque un consumo negativo es un dato inválido cuyo
 origen hay que investigar: capturarlo y seguir produciría un panel calculado
 con datos truncados, que es peor que no tener panel. "Fallar ruidoso" es la
 política correcta cuando la alternativa es mostrar números que nadie puede
@@ -125,15 +125,15 @@ salteaba: acá el contrato del algoritmo es más estricto a propósito.)
 
 ---
 
-### 8. ¿Por qué la vista es "delgada" y qué gano separando `construir_contexto_panel()`?
+### 8. ¿Por qué la vista es simple y qué gano separando `construir_contexto_panel()`?
 
 <details>
 <summary>Ver respuesta</summary>
 
-Una vista delgada no calcula nada: toma el contexto y renderiza. La lógica
+Una vista liviana no calcula nada: toma el contexto y renderiza. La lógica
 de armado vive en `construir_contexto_panel()`, que es una función pura de
 librería estándar: se testea con unittest SIN arrancar Django, sin
-configurar settings y sin motor de plantillas. La ganancia es doble: la
+configurar settings y sin motor de plantillas. La ganancia es que la
 suite corre rápido y en cualquier máquina, y si mañana el panel se consume
 desde otra interfaz (API, consola), el armado del contexto ya está probado
 y reutilizado. La vista solo queda expuesta a los 2 tests que sí piden
@@ -179,9 +179,9 @@ la forma estándar de manejar dependencias opcionales en tests.
 
 ## ¿Cómo seguir estudiando?
 
-1. Corré `python -m unittest test_ejercicio_03.py -v` con y sin Django
-   (`pip uninstall django`) y compará la salida: 16 tests vs 14 + 2 skipped.
-2. Rompé el algoritmo a propósito (borrá el chequeo de negativos) y mirá
+1. Correr `python -m unittest test_ejercicio_03.py -v` con y sin Django
+   (`pip uninstall django`) y comparar la salida: 16 tests vs 14 + 2 skipped.
+2. Romper el algoritmo a propósito (borrar el chequeo de negativos) y mirar
    qué tests de auditoría se caen primero.
-3. Editá `sustentabilidad/panel.html` (agregá una columna o un título) y
-   volvé a correr la demo para ver el render actualizado.
+3. Editar `sustentabilidad/panel.html` agregar una columna o un título y
+   volver a correr la demo para ver el render actualizado.

@@ -45,13 +45,8 @@ from typing import Any
 class StockInvalidoError(Exception):
     """Regla de negocio violada: el stock recibido no es válido.
 
-    Elegí una excepción propia en vez de reutilizar ``ValueError`` por dos
-    razones: el nombre comunica el dominio del problema, y permite capturar
-    SOLO este error sin atrapar de yapa otros errores numéricos que no
-    tienen nada que ver con el inventario.
-
     Attributes:
-        valor_recibido: el valor que disparó el error (útil para mensajes).
+        valor_recibido: el valor que disparó el error.
     """
 
     def __init__(self, mensaje: str, valor_recibido: Any = None) -> None:
@@ -64,8 +59,7 @@ class StockInvalidoError(Exception):
 class DispositivoEcologico:
     """Producto genérico del catálogo de equipamiento sustentable.
 
-    El stock es el atributo crítico del inventario: lo encapsulé con una
-    ``@property`` para que la regla "nunca negativo" se valide en UN único
+    El stock lo encapsulé con una ``@property`` para que la regla se valide en un único
     lugar, sin importar quién ni cómo asigne el valor.
 
     Attributes:
@@ -94,8 +88,6 @@ class DispositivoEcologico:
 
         Reglas de negocio:
             * debe ser un ``int``: rechazo ``float``, ``str`` y hasta ``bool``,
-              porque ``bool`` es subclase de ``int`` en Python y ``True``
-              pasaría el chequeo como si fuera 1;
             * no puede ser negativo (cero es válido: producto sin stock).
         """
         if isinstance(nuevo_stock, bool) or not isinstance(nuevo_stock, int):
@@ -116,8 +108,7 @@ class DispositivoEcologico:
     def generar_ficha_tecnica(self) -> str:
         """Devuelve la ficha técnica comercial en texto.
 
-        Este método es el punto de polimorfismo del TP: las subclases lo
-        redefinen con su versión especializada.
+        Este método es el punto de polimorfismo del TP.
         """
         return (
             f"FICHA TÉCNICA — {type(self).__name__}\n"
@@ -176,7 +167,6 @@ class PanelSolar(DispositivoEcologico):
         """Ficha especializada: reutilizo la base y agrego lo propio.
 
         POLIMORFISMO: misma firma que en la base, otro comportamiento.
-        Uso ``super()`` para no repetir las líneas comunes.
         """
         ficha = super().generar_ficha_tecnica()
         return (
@@ -193,7 +183,7 @@ class PanelSolar(DispositivoEcologico):
         )
 
     def a_dict(self) -> dict[str, Any]:
-        """Extiende la serialización de la base con los campos técnicos."""
+        """Extiendo la serialización de la base con los campos técnicos."""
         datos = super().a_dict()
         datos["potencia_maxima_watts"] = self.potencia_maxima_watts
         datos["eficiencia_porcentaje"] = self.eficiencia_porcentaje
@@ -205,11 +195,6 @@ class PanelSolar(DispositivoEcologico):
 # =============================================================================
 class GestorInventario:
     """Serializa y recupera el catálogo en disco.
-
-    JSON solo entiende tipos básicos (dict, list, str, números...), por eso
-    los objetos NO se pueden volcar directo con ``json.dumps``: cada clase
-    sabe pasarse a dict (``a_dict()``) y este gestor sabe reconstruir
-    instancias desde un dict.
     """
 
     # Registro de clases conocidas: mapea el valor de la clave "tipo" con el
