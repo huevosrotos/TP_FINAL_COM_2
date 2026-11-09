@@ -22,7 +22,13 @@ TP_FINAL_COM_2/
 │   ├── ejercicio_02_inventario.py     # Solución: Puntos A y B + demo completa
 │   ├── test_ejercicio_02.py           # 24 tests unitarios (unittest)
 │   └── guia_de_estudio.md             # 10 preguntas de repaso con respuestas
-└── ejercicio_03_*/                    # Ejercicio 3 (próximamente)
+├── ejercicio_03_emisiones/            # Ejercicio 3 (completo)
+│   ├── README.md                      # Conceptos, diseño y diagrama de flujo
+│   ├── ejercicio_03_emisiones.py      # Algoritmo auditado + métricas + demo
+│   ├── test_ejercicio_03.py           # 16 tests (TestCalculoEmisiones y más)
+│   ├── vista_django.py                # Vista Django del panel (requiere Django)
+│   ├── sustentabilidad/panel.html     # Plantilla del panel administrativo
+│   └── guia_de_estudio.md             # 10 preguntas de repaso con respuestas
 ```
 
 ## Ejercicios
@@ -31,14 +37,14 @@ TP_FINAL_COM_2/
 |---|---|---|---|
 | 1 | [Sanitización y Análisis Estadístico de Sensores](./ejercicio_01_sensores/) | Normalización de registros crudos de EcoTech Solutions + reporte estadístico consolidado (alertas por umbral y promedio térmico). | ✅ Completo |
 | 2 | [Modelo de Productos, Excepciones y Persistencia](./ejercicio_02_inventario/) | Jerarquía POO del catálogo (`DispositivoEcologico`, `PanelSolar`), excepción `StockInvalidoError` con stock encapsulado y persistencia en `catalogo_ecotech.json`. | ✅ Completo |
-| 3 | *A definir* | — | ⬜ Pendiente |
+| 3 | [Auditoría con Tests Unitarios e Integración Web](./ejercicio_03_emisiones/) | Auditoría de `calcular_emisiones_carbono` con unittest, métricas por planta (`obtener_metricas_consumo`) y vista Django `vista_panel_sustentabilidad` con plantilla `sustentabilidad/panel.html`. | ✅ Completo |
 
 ## Requisitos
 
 - **Python 3.10 o superior** (los ejercicios usan type hints modernos como
   `float | None` y `list[str]`).
-- **Cero dependencias externas**: todo se resuelve con la librería estándar,
-  para que el TP funcione en cualquier máquina.
+- **Cero dependencias externas en los ejercicios 1 y 2**: todo se resuelve con la librería estándar.
+- **Django (opcional)**: solo para la vista web del ejercicio 3 (`pip install django`); sin instalarlo, la auditoría y las métricas corren igual.
 
 ## Cómo ejecutar cada ejercicio
 
@@ -56,6 +62,13 @@ python ejercicio_02_inventario.py
 
 # Ejercicio 2 — tests unitarios:
 python -m unittest test_ejercicio_02.py -v
+
+# Ejercicio 3 — demostración (auditoría, métricas y render del panel):
+cd ejercicio_03_emisiones
+python ejercicio_03_emisiones.py
+
+# Ejercicio 3 — tests unitarios (los de la vista piden Django instalado):
+python -m unittest test_ejercicio_03.py -v
 ```
 
 ## Convenciones de documentación del repo
